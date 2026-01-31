@@ -15,6 +15,7 @@ x-services:
 
   base-lnd: &base-lnd
     image: ${LND_IMAGE}
+    platform: ${LND_PLATFORM:-linux/arm64}
     restart: always
     user: '${UID:-1000}:${GID:-1000}'
     depends_on:
@@ -51,6 +52,9 @@ x-services:
       timeout: 1s
       retries: 30
       start_period: 0s
+    networks:
+      - default
+      - shared_network
 
   base-cln: &base-cln
     image: ${CLN_IMAGE}
@@ -101,6 +105,9 @@ x-services:
       retries: 20
       interval: 1s
       start_period: 0s
+    networks:
+      - default
+      - shared_network
 
 services:
   cleanup:
@@ -245,6 +252,23 @@ services:
       start_period: 0s
     profiles: ['default', 'ci', 'backend-dev', 'webapp-ci']
 
+  rif-relay:
+    hostname: rif-relay
+    container_name: boltz-rif-relay
+    image: ${RIF_RELAY_IMAGE}
+    depends_on:
+      anvil:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "curl -s localhost:8090/chain-info"]
+      timeout: 1s
+      retries: 200
+      interval: 2s
+      start_period: 15s
+    ports:
+      - 8090:8090
+    profiles: ["default", "ci"]
+
   bitcoind:
     container_name: boltz-bitcoind
     hostname: bitcoind
@@ -290,7 +314,9 @@ services:
       interval: 1s
       start_period: 0s
     profiles: ['default', 'ci', 'backend-dev', 'webapp-ci']
-
+    networks:
+      - default
+      - shared_network
   elementsd:
     container_name: boltz-elementsd
     hostname: elements
@@ -327,6 +353,9 @@ services:
     volumes:
       - cln1-data:/app/lightning
     profiles: ['default', 'ci', 'backend-dev', 'webapp-ci']
+    networks:
+      - default
+      - shared_network
 
   cln-2:
     container_name: boltz-cln-2
@@ -339,6 +368,9 @@ services:
     volumes:
       - cln2-data:/app/lightning
     profiles: ['default', 'ci', 'backend-dev', 'webapp-ci']
+    networks:
+      - default
+      - shared_network
 
   lnd-1:
     <<: *base-lnd
@@ -351,6 +383,9 @@ services:
     volumes:
       - lnd1-data:/app/lnd/
     profiles: ['default', 'ci', 'backend-dev', 'webapp-ci']
+    networks:
+      - default
+      - shared_network
 
   lnd-2:
     <<: *base-lnd
@@ -361,6 +396,9 @@ services:
     volumes:
       - lnd2-data:/app/lnd/
     profiles: ['default', 'ci', 'backend-dev', 'webapp-ci']
+    networks:
+      - default
+      - shared_network
 
   bitcoind-init:
     <<: *base-scripts
@@ -394,6 +432,8 @@ services:
       cln-2:
         condition: service_healthy
       anvil:
+        condition: service_healthy
+      rif-relay:
         condition: service_healthy
     profiles: ['default', 'ci', 'backend-dev', 'webapp-ci']
 
@@ -700,3 +740,9 @@ volumes:
       type: none
       o: bind
       device: ./data/fulmine
+
+networks:
+  default:
+    driver: bridge
+  shared_network:
+    external: true
