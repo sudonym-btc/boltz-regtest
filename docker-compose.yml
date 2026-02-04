@@ -339,7 +339,7 @@ services:
       timeout: 1s
       retries: 1
       interval: 1s
-      start_period: 0s
+      start_period: 10s
     profiles: ['default', 'ci', 'backend-dev', 'webapp-ci']
 
   cln-1:
