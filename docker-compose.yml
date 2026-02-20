@@ -144,7 +144,7 @@ services:
     restart: always
     image: ${REDIS_IMAGE}
     volumes:
-      - ./redis/cache.conf:/usr/local/etc/redis/redis.conf:ro
+      - ${BOLTZ_ROOT:-.}/redis/cache.conf:/usr/local/etc/redis/redis.conf:ro
     command: redis-server /usr/local/etc/redis/redis.conf
     ports:
       - 6379:6379
@@ -669,77 +669,77 @@ volumes:
     driver_opts:
       type: none
       o: bind
-      device: ./data/backend
+      device: ${BOLTZ_ROOT:-.}/data/backend
   boltz-client-data:
     name: boltz-client-data
     driver: local
     driver_opts:
       type: none
       o: bind
-      device: ./data/boltz-client
+      device: ${BOLTZ_ROOT:-.}/data/boltz-client
   bitcoin-data:
     name: boltz-bitcoind-data
     driver: local
     driver_opts:
       type: none
       o: bind
-      device: ./data/bitcoind
+      device: ${BOLTZ_ROOT:-.}/data/bitcoind
   elements-data:
     name: boltz-elements-data
     driver: local
     driver_opts:
       type: none
       o: bind
-      device: ./data/elements
+      device: ${BOLTZ_ROOT:-.}/data/elements
   cln1-data:
     name: boltz-cln1-data
     driver: local
     driver_opts:
       type: none
       o: bind
-      device: ./data/cln1
+      device: ${BOLTZ_ROOT:-.}/data/cln1
   cln2-data:
     name: boltz-cln2-data
     driver: local
     driver_opts:
       type: none
       o: bind
-      device: ./data/cln2
+      device: ${BOLTZ_ROOT:-.}/data/cln2
   lnd1-data:
     name: boltz-lnd1-data
     driver: local
     driver_opts:
       type: none
       o: bind
-      device: ./data/lnd1
+      device: ${BOLTZ_ROOT:-.}/data/lnd1
   lnd2-data:
     name: boltz-lnd2-data
     driver: local
     driver_opts:
       type: none
       o: bind
-      device: ./data/lnd2
+      device: ${BOLTZ_ROOT:-.}/data/lnd2
   nginx-data:
     name: boltz-nginx-data
     driver: local
     driver_opts:
       type: none
       o: bind
-      device: ./data/backend-nginx/
+      device: ${BOLTZ_ROOT:-.}/data/backend-nginx/
   arkd-data:
     name: arkd-data
     driver: local
     driver_opts:
       type: none
       o: bind
-      device: ./data/arkd
+      device: ${BOLTZ_ROOT:-.}/data/arkd
   fulmine-data:
     name: fulmine-data
     driver: local
     driver_opts:
       type: none
       o: bind
-      device: ./data/fulmine
+      device: ${BOLTZ_ROOT:-.}/data/fulmine
 
 networks:
   default:
